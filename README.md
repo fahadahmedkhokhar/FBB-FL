@@ -22,7 +22,6 @@ FBB-FL/
 ├── dataset/
 │   └── Tabular/    # Tabular dataset
 │   └── Image/      # Image dataset
-├── federated_learning_tabular_pipeline.py  # Main training pipeline
 ├── image_custom.py                          # Code of Image Dataset
 ├── tabular_custom.py                        # Code of Tabular Dataset
 ├── models/
