@@ -20,15 +20,19 @@ This repository implements a **modular federated learning pipeline** using [Flow
 ```
 FBB-FL/
 ├── dataset/
-│   └── Tabular/    # Tabular dataset
-│   └── Image/      # Image dataset
-├── image_custom.py                          # Code of Image Dataset
-├── tabular_custom.py                        # Code of Tabular Dataset
+│   └── Tabular/        # Tabular dataset
+│   └── Image/          # Image dataset
+├── image_custom.py     # Code of Image Dataset
+├── tabular_custom.py   # Code of Tabular Dataset
+├── fl_server.py        # Code of Server
+├── fl_client.py        # Code of Clients
+├── dataset_utils.py    # Code of Dataset Utilities
+├── custom_strategy.py  # Code of custom strategy used instead of FedAvg
 ├── models/
-│   └── model_utils.py                        # Classifier factory
-├── results.txt                           # Output metrics
-├── confidence_report.csv                 # Per-model predictions and probabilities
-├── um_output.csv                         # UM-based final predictions
+│   └── model_utils.py  # Classifier factory
+├── results.txt         # Output metrics
+├── confidence_report.csv  # Per-model predictions and probabilities
+├── um_output.csv       # UM-based final predictions
 └── README.md
 ```
 
@@ -65,7 +69,19 @@ pip install scikit-learn pandas numpy flwr
 ```bash
 python image_custom.py
 ```
+### Run Server of Federated Learning
+```bash
+python fl_server.py
+```
 
+### Run Client of Federated Learning (e.g., for 6 clients)
+```bash
+python fl_client.py 0 6
+python fl_client.py 1 6
+...
+python fl_client.py 5 6
+```
+Each client will automatically pick a different model based on its ID.
 
 This script computes:
 - UM-based majority predictions
@@ -80,19 +96,6 @@ This script computes:
 ✅ UM-Max Accuracy: 0.9432
 ✅ Prediction and Uncertainty Measure calculated and saved.
 ```
-
----
-
-## 📊 Omission Metrics
-
-After running the pipeline, omission metrics are saved to `results.txt`:
-
-| Metric       | Description                              |
-|--------------|------------------------------------------|
-| alpha        | Accuracy of original classifier          |
-| alpha_w      | Accuracy after applying wrapper (UM)     |
-| phi          | Fraction of rejected samples (omissions) |
-| eps_gain     | Accuracy gain from rejection strategy    |
 
 ---
 
