@@ -63,7 +63,7 @@ pip install scikit-learn pandas numpy flwr
 ---
 
 ## 🧪 Running the Project for Tabular Dataset
-To run for Images click [here][https://github.com/fahadahmedkhokhar/FBB-FL/tree/image]
+To run for Images click [here](https://github.com/fahadahmedkhokhar/FBB-FL/tree/image)
 ### Run the desired dataset base python file
 
 ```bash
