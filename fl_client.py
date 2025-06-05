@@ -1,31 +1,19 @@
 import flwr as fl
 import sys
 import json
+import torch
 import numpy as np
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from sklearn.naive_bayes import GaussianNB
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.metrics import accuracy_score
-from dataset_utils import load_partition
+from models.plmodels import ImageClassifier
+from dataset_utils import load_datasets, get_dnn_classifiers
 
 
-class SklearnClient(fl.client.NumPyClient):
+class TorchImageClient(fl.client.NumPyClient):
     def __init__(self, cid: int, num_partitions: int):
         self.cid = cid
-        (self.X_train, self.y_train), (self.X_val, self.y_val), (self.X_test, self.y_test) = load_partition(cid, num_partitions)
+        self.trainloader, self.valloader, self.testloader = load_datasets(cid, num_partitions)
 
-        # List of different models for each client
-        model_list = [
-            GradientBoostingClassifier(n_estimators=30),
-            GradientBoostingClassifier(n_estimators=100),
-            DecisionTreeClassifier(),
-            LinearDiscriminantAnalysis(),
-            RandomForestClassifier(n_estimators=100),
-            GaussianNB()
-        ]
-
-        # Assign a model based on client ID
+        model_list = get_dnn_classifiers()
         self.model = model_list[cid % len(model_list)]
         self.fitted = False
 
@@ -34,18 +22,18 @@ class SklearnClient(fl.client.NumPyClient):
         return []
 
     def fit(self, parameters, config):
-        self.model.fit(self.X_train, self.y_train)
+        self.model.fit(self.trainloader, self.valloader)
         self.fitted = True
-        return [], len(self.X_train), {}
+        return [], len(self.trainloader), {}
 
     def evaluate(self, parameters, config):
         # Ensure the model is trained before evaluating
         if not self.fitted:
-            self.model.fit(self.X_train, self.y_train)
+            self.model.fit(self.trainloader, self.valloader)
             self.fitted = True
 
-        preds = self.model.predict(self.X_test)
-        probas = self.model.predict_proba(self.X_test)
+        preds = self.model.predict(self.testloader)
+        probas = self.model.predict_proba(self.testloader)
 
         metrics = {
             "predictions": json.dumps(preds.tolist()),
@@ -53,12 +41,18 @@ class SklearnClient(fl.client.NumPyClient):
         }
 
         if self.cid == 0:
-            metrics["true_labels"] = json.dumps(self.y_test.tolist())
+            y_true = []
+            for _, labels in self.testloader:
+                y_true.extend(labels.numpy())  # accumulate ground-truth labels
+            metrics["true_labels"] = json.dumps(list(map(int, y_true)))
 
-        return float(accuracy_score(self.y_test, preds)), len(self.X_test), metrics
+
+
+        print("Fahad", len(preds) )
+        return float(accuracy_score(y_true, preds)), len(self.testloader.dataset), metrics
 
 
 if __name__ == "__main__":
     cid = int(sys.argv[1])
     num_clients = int(sys.argv[2])
-    fl.client.start_numpy_client(server_address="127.0.0.1:8080", client=SklearnClient(cid, num_clients))
+    fl.client.start_numpy_client(server_address="127.0.0.1:8080", client=TorchImageClient(cid, num_clients))
