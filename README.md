@@ -54,9 +54,10 @@ Create a virtual environment and install the required packages:
 ```bash
 conda create -n fbb-fl python=3.10
 conda activate fbb-fl
-
+```
+```bash
 pip install -r requirements.txt
-
+```
 
 ---
 
