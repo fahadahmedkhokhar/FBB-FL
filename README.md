@@ -56,13 +56,11 @@ conda create -n fbb-fl python=3.10
 conda activate fbb-fl
 
 pip install -r requirements.txt
-# OR manually install
-pip install scikit-learn pandas numpy flwr
-```
+
 
 ---
 
-## 🧪 Running the Project
+## 🧪 Running the Project on Image Dataset
 
 ### Run the desired dataset base python file
 
