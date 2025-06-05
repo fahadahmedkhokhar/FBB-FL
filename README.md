@@ -43,7 +43,7 @@ FBB-FL/
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/fahadahmedkhokhar/FBB-FL.git
+git clone --branch image https://github.com/fahadahmedkhokhar/FBB-FL.git
 cd FBB-FL
 ```
 
