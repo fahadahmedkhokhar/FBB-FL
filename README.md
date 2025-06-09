@@ -107,13 +107,6 @@ The custom Flower strategy (`UMSelectionStrategy`) modifies the default `FedAvg`
 
 ---
 
-## 📝 Author
-
-**Fahad Ahmed Khokhar**  
-[GitHub](https://github.com/fahadahmedkhokhar) | [LinkedIn](https://www.linkedin.com/in/fahadahmedkhokhar)
-
----
-
 ## 📜 License
 
 This project is licensed under the MIT License.
